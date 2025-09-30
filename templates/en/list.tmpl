@@ -1,0 +1,10 @@
+{{define "title"}}App Publisher{{end}}
+{{template "head" .}}
+<p class="header"><a href="/">Mochi</a> | App Publisher</p>
+
+<p>{{if len .}}{{range .}}<a href="/app/{{.id}}/{{.name}}">{{.name}}</a><br/>{{end}}
+{{else}}You have no apps{{end}}</p>
+
+<p><a href="/app/new">New app</a></p>
+
+{{template "foot" .}}

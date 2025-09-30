@@ -1,0 +1,12 @@
+{{define "title"}}New app{{end}}
+{{template "head" .}}
+<p class="header"><a href="/">Mochi</a> | <a href="/app">App Publisher</a> | New
+
+<p>
+<form id="form" method="post" action="/app/create">
+<label for="name">Name: </label><input type="text" id="name" name="name" size="100" maxlength="1000"/><br/>
+<input type="submit" value="Create app"/>
+</form>
+</p>
+
+{{template "foot" .}}
