@@ -43,6 +43,8 @@ def action_app_view(action, inputs):
 		mochi.action.error(404, "App not found")
 		return
 	
+	app["fingerprint"] = mochi.entity.fingerprint(app["id"], True)
+	
 	mochi.action.write("view", action["format"], {"app": app, "tracks": mochi.db.query("select * from tracks where app=? order by track", app["id"]), "versions": mochi.db.query("select * from versions where app=? order by version", app["id"])})
 
 
