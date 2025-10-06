@@ -13,11 +13,14 @@
 	"paths": {
 		"app": {
 			"actions": {
-				"": {"function": "action_list"},
-				"create": {"function": "action_create"},
-				"new": {"function": "action_new"},
-				":app": {"function": "action_view"},
-				":app/:name": {"function": "action_view"}
+				"": {"function": "action_apps_list"},
+				"create": {"function": "action_app_create"},
+				"new": {"function": "action_app_new"},
+				":app": {"function": "action_app_view"},
+				":app/:name": {"function": "action_app_view"},
+				":app/track/create": {"function": "action_track_create"},
+				":app/track/new": {"function": "action_track_new"},
+				":app/version/create": {"function": "action_version_create"}
 			}
 		}
 	},
@@ -26,8 +29,7 @@
 		"app": {
 			"events": {
 				"get": {"function": "event_get"},
-				"put": {"function": "event_put"},
-				"versions": {"function": "event_versions"}
+				"version": {"function": "event_version"}
 			}
 		}
 	}

@@ -2,4 +2,26 @@
 {{template "head" .}}
 <p class="header"><a href="/">Mochi</a> | <a href="/app">App Publisher</a> | {{.app.name}}</p>
 
+<h2>{{.app.name}}</h2>
+<p>ID: {{.app.id}}</p>
+
+{{if len .tracks}}
+<h3>Tracks</h3>
+<p>
+{{range .tracks}}{{.track}}: {{.version}}<br/>{{end}}
+{{end}}
+
+{{if len .versions}}
+<h3>Versions</h3>
+<p>
+{{range .versions}}{{.version}}: {{.file}}<br/>{{end}}
+{{end}}
+
+<h3>Upload new version</h3>
+<form method="post" enctype="multipart/form-data" action="/app/{{.app.id}}/version/create">
+	<label for="file">File to upload:</label>
+	<input type="file" name="file"><br/>
+	<input type="submit" value="Upload"/>
+</form>
+
 {{template "foot" .}}
