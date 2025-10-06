@@ -21,6 +21,11 @@
 <form method="post" enctype="multipart/form-data" action="/app/{{.app.id}}/version/create">
 	<label for="file">File to upload:</label>
 	<input type="file" name="file"><br/>
+	<label for="install">Also install locally:</label>
+	<select name="install">
+		<option value="no">No</option>
+		<option value="yes">Yes</option>
+	</select><br/>
 	<input type="submit" value="Upload"/>
 </form>
 
