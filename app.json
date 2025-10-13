@@ -1,13 +1,12 @@
 {
-	"name": "app",
 	"version": "1.0",
-
+	"label": "app_name",
 	"engine": {"architecture": "starlark", "version": "1"},
 	"files": [ "app.star" ],
 	"database": {"file": "app.db", "create": "database_create"},
 
 	"icons": [
-		{"path": "app", "name": "App Publisher", "icon": "app.png"}
+		{"path": "app", "label": "app_name", "icon": "app.png"}
 	],
 
 	"paths": {

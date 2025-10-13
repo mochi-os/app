@@ -48,28 +48,6 @@ def action_app_view(action, inputs):
 	mochi.action.write("view", action["format"], {"app": app, "tracks": mochi.db.query("select * from tracks where app=? order by track", app["id"]), "versions": mochi.db.query("select * from versions where app=? order by version", app["id"])})
 
 
-# Create a track
-#TODO
-def action_track_create(action, inputs):
-	app = mochi.db.row("select * from apps where id=?", inputs.get("app"))
-	if not app:
-		mochi.action.error(404, "App not found")
-		return
-
-	mochi.action.write("track/create", action["format"], {"app": app})
-
-
-# New track
-#TODO
-def action_track_new(action, inputs):
-	app = mochi.db.row("select * from apps where id=?", inputs.get("app"))
-	if not app:
-		mochi.action.error(404, "App not found")
-		return
-
-	mochi.action.write("track/new", action["format"], {"app": app})
-
-
 # Create a version
 def action_version_create(action, inputs):
 	app = mochi.db.row("select * from apps where id=?", inputs.get("app"))
@@ -84,7 +62,7 @@ def action_version_create(action, inputs):
 
 	mochi.action.file.write("file", file)
 
-	version = mochi.app.install(app["id"], file, inputs.get("install") != "yes")
+	version = mochi.app.install.file(app["id"], file, inputs.get("install") != "yes")
 
 	mochi.db.query("replace into versions ( app, version, file ) values ( ?, ?, ? )", app["id"], version, file)
 	if not mochi.db.exists("select track from tracks where app=? limit 1", app["id"]):
