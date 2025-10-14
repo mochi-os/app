@@ -1,7 +1,6 @@
 # Mochi App publisher app
 # Copyright Alistair Cunningham 2025
 
-
 # Create database
 def database_create():
 	mochi.db.query("create table apps ( id text not null primary key, name text not null )")
@@ -11,7 +10,6 @@ def database_create():
 
 	mochi.db.query("create table tracks ( app references app( id ), track text not null, version text not null, primary key ( app, track ) )")
 	return 1
-
 
 # Create new app
 def action_app_create(action, inputs):
@@ -25,16 +23,13 @@ def action_app_create(action, inputs):
 
 	mochi.action.redirect("/app/" + id)
 
-
 # List apps
 def action_apps_list(action, inputs):
 	mochi.action.write("list", action["format"], mochi.db.query("select * from apps order by name"))
 
-
 # Enter details of new app
 def action_app_new(action, inputs):
 	mochi.action.write("new", action["format"])
-
 
 # View an app
 def action_app_view(action, inputs):
@@ -45,8 +40,7 @@ def action_app_view(action, inputs):
 	
 	app["fingerprint"] = mochi.entity.fingerprint(app["id"], True)
 	
-	mochi.action.write("view", action["format"], {"app": app, "tracks": mochi.db.query("select * from tracks where app=? order by track", app["id"]), "versions": mochi.db.query("select * from versions where app=? order by version", app["id"])})
-
+	mochi.action.write("view", action["format"], {"app": app, "tracks": mochi.db.query("select * from tracks where app=? order by track", app["id"]), "versions": mochi.db.query("select * from versions where app=? order by version", app["id"]), "administrator": mochi.user.get()["role"] == "administrator"})
 
 # Create a version
 def action_version_create(action, inputs):
@@ -70,7 +64,6 @@ def action_version_create(action, inputs):
 
 	mochi.action.write("version/create", action["format"], {"app": app, "version": version})
 
-
 # Recieve a request to download an app
 def event_get(event, content):
 	v = mochi.db.row("select * from versions where app=? and version=?", event["to"], content.get("version"))
@@ -80,7 +73,6 @@ def event_get(event, content):
 	
 	mochi.event.response({"status": 200})
 	mochi.event.file(v["file"])
-
 
 # Received a request to get version for requested track
 def event_version(event, content):

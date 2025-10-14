@@ -22,11 +22,11 @@ Fingerprint: {{.app.fingerprint}}</p>
 <form method="post" enctype="multipart/form-data" action="/app/{{.app.id}}/version/create">
 	<label for="file">File to upload:</label>
 	<input type="file" name="file" accept=".zip"><br/>
-	<label for="install">Also install locally:</label>
+	{{if .administrator}}<label for="install">Also install locally:</label>
 	<select name="install">
 		<option value="no">No</option>
 		<option value="yes">Yes</option>
-	</select><br/>
+	</select><br/>{{end}}
 	<input type="submit" value="Upload"/>
 </form>
 
