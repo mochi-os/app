@@ -54,7 +54,7 @@ def action_version_create(action, inputs):
 		mochi.action.error(400, "File name invalid")
 		return
 
-	mochi.action.file.write("file", file)
+	mochi.action.file.upload("file", file)
 
 	version = mochi.app.install.file(app["id"], file, inputs.get("install") != "yes")
 
