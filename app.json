@@ -1,7 +1,7 @@
 {
 	"version": "1.0",
 	"label": "app_name",
-	"engine": {"architecture": "starlark", "version": "1"},
+	"engine": {"architecture": "starlark", "version": 2},
 	"files": [ "app.star" ],
 	"database": {"file": "app.db", "create": "database_create"},
 
@@ -27,6 +27,7 @@
 	"services": {
 		"app": {
 			"events": {
+				"information": {"function": "event_information"},
 				"get": {"function": "event_get"},
 				"version": {"function": "event_version"}
 			}

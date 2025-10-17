@@ -2,6 +2,6 @@
 {{template "head" .}}
 <p class="header"><a href="/">Mochi</a> | <a href="/app">App Publisher</a> | {{.app.name}} | Version {{.version}} created</p>
 
-<p>Version {{.version}} has been created. You may now <a href="..">return</a>.</p>
+<p>Version {{.version}} has been created. You may now <a href="/app/{{.app.id}}">return</a>.</p>
 
 {{template "foot" .}}
