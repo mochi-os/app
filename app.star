@@ -38,7 +38,7 @@ def action_app_view(a):
 	
 	app["fingerprint"] = mochi.entity.fingerprint(app["id"], True)
 	
-	a.template("view", {"app": app, "tracks": mochi.db.query("select * from tracks where app=? order by track", app["id"]), "versions": mochi.db.query("select * from versions where app=? order by version", app["id"]), "administrator": mochi.user.get()["role"] == "administrator"})
+	a.template("view", {"app": app, "tracks": mochi.db.query("select * from tracks where app=? order by track", app["id"]), "versions": mochi.db.query("select * from versions where app=? order by version", app["id"]), "administrator": a.user()["role"] == "administrator"})
 
 # Create a version
 def action_version_create(a):
