@@ -61,17 +61,17 @@ def action_version_create(a):
 
 # Receive a request for information about an app
 def event_information(e):
-	a = mochi.db.row("select * from apps where id=?", e.to)
+	a = mochi.db.row("select * from apps where id=?", e.header("to"))
 	if not a:
 		return e.write({"status": "404", "message": "App not found"})
 	
 	e.write({"status": "200"})
 	e.write(a)
-	e.write(mochi.db.query("select track, version from tracks where app=?", e.to))
+	e.write(mochi.db.query("select track, version from tracks where app=?", e.header("to")))
 
 # Recieve a request to download an app
 def event_get(e):
-	v = mochi.db.row("select * from versions where app=? and version=?", e.to, e.content("version"))
+	v = mochi.db.row("select * from versions where app=? and version=?", e.header("to"), e.content("version"))
 	if not v:
 		e.write({"status": "404", "message": "App or version not found"})
 		return
@@ -81,7 +81,7 @@ def event_get(e):
 
 # Received a request to get version for requested track
 def event_version(e):
-	t = mochi.db.row("select version from tracks where app=? and track=?", e.to, e.content("track", "production"))
+	t = mochi.db.row("select version from tracks where app=? and track=?", e.header("to"), e.content("track", "production"))
 	if not t:
 		return e.write({"status": "404", "message": "App or track not found"})
 
