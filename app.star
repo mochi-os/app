@@ -3,7 +3,7 @@
 
 # Create database
 def database_create():
-	mochi.db.query("create table apps ( id text not null primary key, name text not null )")
+	mochi.db.query("create table apps ( id text not null primary key, name text not null, privacy text not null default 'public' )")
 
 	mochi.db.query("create table versions ( app references app( id ), version text not null, file text not null, primary key ( app, version ) )")
 	mochi.db.query("create index versions_file on versions( file )")
@@ -17,8 +17,12 @@ def action_app_create(a):
 	if not mochi.valid(name, "name"):
 		return a.error(400, "Invalid app name")
 	
-	id = mochi.entity.create("app", name, "public")
-	mochi.db.query("replace into apps ( id, name ) values ( ?, ? )", id, name)
+	privacy = a.input("privacy")
+	if not mochi.valid(privacy, "privacy"):
+		return a.error(400, "Invalid privacy")
+
+	id = mochi.entity.create("app", name, privacy)
+	mochi.db.query("replace into apps ( id, name, privacy ) values ( ?, ?, ? )", id, name, privacy)
 
 	a.redirect("/app/" + id)
 
@@ -61,29 +65,36 @@ def action_version_create(a):
 
 # Receive a request for information about an app
 def event_information(e):
-	a = mochi.db.row("select * from apps where id=?", e.header("to"))
+	a = mochi.db.row("select * from apps where id=? and privacy='public'", e.header("to"))
 	if not a:
-		return e.write({"status": "404", "message": "App not found"})
+		return e.write({"status": "404", "message": "App not found or not public"})
 	
 	e.write({"status": "200"})
 	e.write(a)
-	e.write(mochi.db.query("select track, version from tracks where app=?", e.header("to")))
+	e.write(mochi.db.query("select track, version from tracks where app=?", a["id"]))
 
 # Recieve a request to download an app
 def event_get(e):
-	v = mochi.db.row("select * from versions where app=? and version=?", e.header("to"), e.content("version"))
+	a = mochi.db.row("select * from apps where id=? and privacy='public'", e.header("to"))
+	if not a:
+		return e.write({"status": "404", "message": "App not found or not public"})
+
+	v = mochi.db.row("select * from versions where app=? and version=?", a["id"], e.content("version"))
 	if not v:
-		e.write({"status": "404", "message": "App or version not found"})
-		return
+		return e.write({"status": "404", "message": "App version not found"})
 	
 	e.write({"status": "200"})
 	e.write_from_file(v["file"])
 
-# Received a request to get version for requested track
+# Receive a request to get version for requested track
 def event_version(e):
-	t = mochi.db.row("select version from tracks where app=? and track=?", e.header("to"), e.content("track", "production"))
+	a = mochi.db.row("select * from apps where id=? and privacy='public'", e.header("to"))
+	if not a:
+		return e.write({"status": "404", "message": "App not found or not public"})
+
+	t = mochi.db.row("select version from tracks where app=? and track=?", a["id"], e.content("track", "production"))
 	if not t:
-		return e.write({"status": "404", "message": "App or track not found"})
+		return e.write({"status": "404", "message": "App track not found"})
 
 	e.write({"status": "200"})
 	e.write({"version": t["version"]})

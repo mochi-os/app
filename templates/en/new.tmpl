@@ -5,6 +5,11 @@
 <p>
 <form id="form" method="post" action="/app/create">
 <label for="name">Name: </label><input type="text" id="name" name="name" size="100" maxlength="1000"/><br/>
+<label for="privacy">Make app publicly available:</label>
+<select name="privacy">
+	<option value="public">Yes</option>
+	<option value="private">No</option>
+</select><br/>
 <input type="submit" value="Create app"/>
 </form>
 </p>
