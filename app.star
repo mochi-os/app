@@ -28,7 +28,7 @@ def action_app_create(a):
 
 # List apps
 def action_apps_list(a):
-	a.template("list", mochi.db.query("select * from apps order by name"))
+	a.template("list", {"apps": mochi.db.query("select * from apps order by name")})
 
 # Enter details of new app
 def action_app_new(a):
