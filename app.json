@@ -2,8 +2,15 @@
 	"version": "1.0",
 	"label": "app_name",
 	"engine": {"architecture": "starlark", "version": 2},
-	"files": [ "app.star" ],
-	"database": {"file": "app.db", "create": "database_create"},
+	"files": [ "app.star", "database.star" ],
+
+	"database": {
+		"version": 1,
+		"file": "app.db",
+		"create": {"function": "database_create"},
+		"upgrade": {"function": "database_upgrade"},
+		"downgrade": {"function": "database_downgrade"}
+	},
 
 	"icons": [
 		{"path": "app", "label": "app_name", "icon": "app.png"}
