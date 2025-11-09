@@ -5,11 +5,9 @@
 	"files": [ "app.star" ],
 
 	"database": {
-		"version": 1,
+		"schema": 1,
 		"file": "app.db",
-		"create": {"function": "database_create"},
-		"upgrade": {"function": "database_upgrade"},
-		"downgrade": {"function": "database_downgrade"}
+		"create": {"function": "database_create"}
 	},
 
 	"icons": [
