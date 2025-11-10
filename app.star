@@ -9,7 +9,6 @@ def database_create():
 	mochi.db.query("create index versions_file on versions( file )")
 
 	mochi.db.query("create table tracks ( app references app( id ), track text not null, version text not null, primary key ( app, track ) )")
-	return 1
 
 # Create new app
 def action_app_create(a):
