@@ -1,8 +1,11 @@
 {
 	"version": "1.0",
 	"label": "app_name",
-	"engine": {"architecture": "starlark", "version": 2},
-	"files": [ "app.star" ],
+	"paths": ["app"],
+	"services": ["app"],
+
+	"architecture": {"engine": "starlark", "version": 2},
+	"execute": ["app.star"],
 
 	"database": {
 		"schema": 1,
@@ -11,31 +14,23 @@
 	},
 
 	"icons": [
-		{"path": "app", "label": "app_name", "icon": "app.png"}
+		{"action": "", "label": "app_name", "file": "app.png"}
 	],
 
-	"paths": {
-		"app": {
-			"actions": {
-				"": {"function": "action_apps_list"},
-				"create": {"function": "action_app_create"},
-				"new": {"function": "action_app_new"},
-				":app": {"function": "action_app_view"},
-				":app/:name": {"function": "action_app_view"},
-				":app/track/create": {"function": "action_track_create"},
-				":app/track/new": {"function": "action_track_new"},
-				":app/version/create": {"function": "action_version_create"}
-			}
-		}
+	"actions": {
+		"": {"function": "action_apps_list"},
+		"create": {"function": "action_app_create"},
+		"new": {"function": "action_app_new"},
+		":app": {"function": "action_app_view"},
+		":app/:name": {"function": "action_app_view"},
+		":app/track/create": {"function": "action_track_create"},
+		":app/track/new": {"function": "action_track_new"},
+		":app/version/create": {"function": "action_version_create"}
 	},
 
-	"services": {
-		"app": {
-			"events": {
-				"information": {"function": "event_information"},
-				"get": {"function": "event_get"},
-				"version": {"function": "event_version"}
-			}
-		}
+	"events": {
+		"information": {"function": "event_information"},
+		"get": {"function": "event_get"},
+		"version": {"function": "event_version"}
 	}
 }
