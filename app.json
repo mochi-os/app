@@ -1,11 +1,11 @@
 {
 	"version": "1.0",
 	"label": "app_name",
-	"paths": ["app"],
+	"paths": ["publisher"],
 	"services": ["app"],
 
 	"architecture": {"engine": "starlark", "version": 2},
-	"execute": ["app.star"],
+	"execute": ["publisher.star"],
 
 	"database": {
 		"schema": 1,
@@ -18,13 +18,11 @@
 	],
 
 	"actions": {
-		"": {"function": "action_apps_list"},
-		"create": {"function": "action_app_create"},
-		"new": {"function": "action_app_new"},
-		":app": {"function": "action_app_view"},
-		":app/:name": {"function": "action_app_view"},
-		":app/track/create": {"function": "action_track_create"},
-		":app/track/new": {"function": "action_track_new"},
+		"": {"file": "web/dist/index.html"},
+		"assets": {"files": "web/dist/assets"},
+		"list": {"function": "action_list"},
+		"view/:id": {"function": "action_view"},
+		"create": {"function": "action_create"},
 		":app/version/create": {"function": "action_version_create"}
 	},
 

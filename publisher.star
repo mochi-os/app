@@ -4,54 +4,51 @@
 # Create database
 def database_create():
 	mochi.db.query("create table apps ( id text not null primary key, name text not null, privacy text not null default 'public' )")
-
 	mochi.db.query("create table versions ( app references app( id ), version text not null, file text not null, primary key ( app, version ) )")
 	mochi.db.query("create index versions_file on versions( file )")
-
 	mochi.db.query("create table tracks ( app references app( id ), track text not null, version text not null, primary key ( app, track ) )")
 
+# List apps
+def action_list(a):
+	apps = mochi.db.query("select * from apps order by name")
+	return {"data": {"apps": apps}}
+
+# View an app
+def action_view(a):
+	app = mochi.db.row("select * from apps where id=?", a.input("id"))
+	if not app:
+		return {"status": 404, "error": "App not found", "data": {}}
+
+	app["fingerprint"] = mochi.entity.fingerprint(app["id"], True)
+	tracks = mochi.db.query("select * from tracks where app=? order by track", app["id"])
+	versions = mochi.db.query("select * from versions where app=? order by version", app["id"])
+
+	return {"data": {"app": app, "tracks": tracks, "versions": versions, "administrator": a.user.role == "administrator"}}
+
 # Create new app
-def action_app_create(a):
+def action_create(a):
 	name = a.input("name")
 	if not mochi.valid(name, "name"):
-		return a.error(400, "Invalid app name")
-	
+		return {"status": 400, "error": "Invalid app name", "data": {}}
+
 	privacy = a.input("privacy")
 	if not mochi.valid(privacy, "privacy"):
-		return a.error(400, "Invalid privacy")
+		return {"status": 400, "error": "Invalid privacy", "data": {}}
 
 	id = mochi.entity.create("app", name, privacy)
 	mochi.db.query("replace into apps ( id, name, privacy ) values ( ?, ?, ? )", id, name, privacy)
 
-	a.redirect("/app/" + id)
-
-# List apps
-def action_apps_list(a):
-	a.template("list", {"apps": mochi.db.query("select * from apps order by name")})
-
-# Enter details of new app
-def action_app_new(a):
-	a.template("new")
-
-# View an app
-def action_app_view(a):
-	app = mochi.db.row("select * from apps where id=?", a.input("app"))
-	if not app:
-		return a.error(404, "App not found")
-	
-	app["fingerprint"] = mochi.entity.fingerprint(app["id"], True)
-	
-	a.template("view", {"app": app, "tracks": mochi.db.query("select * from tracks where app=? order by track", app["id"]), "versions": mochi.db.query("select * from versions where app=? order by version", app["id"]), "administrator": a.user.role == "administrator"})
+	return {"data": {"id": id, "name": name}}
 
 # Create a version
 def action_version_create(a):
 	app = mochi.db.row("select * from apps where id=?", a.input("app"))
 	if not app:
-		return a.error(404, "App not found")
+		return {"status": 404, "error": "App not found", "data": {}}
 
 	file = a.input("file")
 	if not mochi.valid(file, "filename"):
-		return a.error(400, "File name invalid")
+		return {"status": 400, "error": "File name invalid", "data": {}}
 
 	a.upload("file", file)
 
@@ -60,14 +57,14 @@ def action_version_create(a):
 	mochi.db.query("replace into versions ( app, version, file ) values ( ?, ?, ? )", app["id"], version, file)
 	mochi.db.query("replace into tracks ( app, track, version ) values ( ?, 'production', ? )", app["id"], version)
 
-	a.template("version/create", {"app": app, "version": version})
+	return {"data": {"version": version, "app": app}}
 
 # Receive a request for information about an app
 def event_information(e):
 	a = mochi.db.row("select * from apps where id=? and privacy='public'", e.header("to"))
 	if not a:
 		return e.write({"status": "404", "message": "App not found or not public"})
-	
+
 	e.write({"status": "200"})
 	e.write(a)
 	e.write(mochi.db.query("select track, version from tracks where app=?", a["id"]))
@@ -81,7 +78,7 @@ def event_get(e):
 	v = mochi.db.row("select * from versions where app=? and version=?", a["id"], e.content("version"))
 	if not v:
 		return e.write({"status": "404", "message": "App version not found"})
-	
+
 	e.write({"status": "200"})
 	e.write_from_file(v["file"])
 
