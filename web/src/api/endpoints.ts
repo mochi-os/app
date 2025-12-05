@@ -1,9 +1,9 @@
 const endpoints = {
   apps: {
-    list: '/app/list',
-    get: (id: string) => `/app/view/${id}`,
-    create: '/app/create',
-    uploadVersion: (id: string) => `/app/${id}/version/create`,
+    list: '/publisher/list',
+    get: (id: string) => `/publisher/view/${id}`,
+    create: '/publisher/create',
+    uploadVersion: (id: string) => `/publisher/${id}/version/create`,
   },
 } as const
 
