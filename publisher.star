@@ -69,7 +69,7 @@ def event_information(e):
 	e.write(a)
 	e.write(mochi.db.query("select track, version from tracks where app=?", a["id"]))
 
-# Recieve a request to download an app
+# Receive a request to download an app
 def event_get(e):
 	a = mochi.db.row("select * from apps where id=? and privacy='public'", e.header("to"))
 	if not a:
