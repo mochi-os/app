@@ -36,7 +36,7 @@ export function Apps() {
   if (isLoading && !apps) {
     return (
       <>
-        <Header>
+        <Header fixed>
           <h1 className="text-lg font-semibold">App Publisher</h1>
         </Header>
         <Main>
@@ -139,7 +139,7 @@ function AppDetails({
   if (isLoading || !data) {
     return (
       <>
-        <Header>
+        <Header fixed>
           <Button variant="ghost" size="sm" onClick={onBack} className="mr-2">
             <ArrowLeft className="h-4 w-4" />
           </Button>
@@ -158,7 +158,7 @@ function AppDetails({
 
   return (
     <>
-      <Header>
+      <Header fixed>
         <Button variant="ghost" size="sm" onClick={onBack} className="mr-2">
           <ArrowLeft className="h-4 w-4" />
         </Button>
