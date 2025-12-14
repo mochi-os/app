@@ -8,7 +8,7 @@ import type {
   Track,
   Version,
 } from '@/api/types/apps'
-import { requestHelpers } from '@/lib/request'
+import { requestHelpers } from '@mochi/common'
 
 const listApps = async (): Promise<App[]> => {
   const response = await requestHelpers.get<AppsListResponse>(

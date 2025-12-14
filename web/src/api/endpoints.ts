@@ -6,10 +6,10 @@ const endpoints = {
     logout: '/_/logout',
   },
   apps: {
-    list: '/publisher/list',
-    get: (id: string) => `/publisher/view/${id}`,
-    create: '/publisher/create',
-    uploadVersion: (id: string) => `/publisher/${id}/version/create`,
+    list: 'list',
+    get: (id: string) => `view/${id}`,
+    create: 'create',
+    uploadVersion: (id: string) => `${id}/version/create`,
   },
 } as const
 

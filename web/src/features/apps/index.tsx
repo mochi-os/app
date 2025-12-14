@@ -14,18 +14,16 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from '@/components/ui/dialog'
-import { Button } from '@/components/ui/button'
-import {
+  Button,
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from '@/components/ui/card'
-import { Input } from '@/components/ui/input'
-import { Header } from '@/components/layout/header'
-import { Main } from '@/components/layout/main'
+  Input,
+  Header,
+  Main,
+} from '@mochi/common'
 
 export function Apps() {
   const [selectedAppId, setSelectedAppId] = useState<string | null>(null)
