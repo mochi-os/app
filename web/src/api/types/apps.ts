@@ -18,30 +18,22 @@ export interface Version {
 }
 
 export interface AppsListResponse {
-  data: {
-    apps: App[]
-  }
+  apps: App[]
 }
 
 export interface AppDetailsResponse {
-  data: {
-    app: App
-    tracks: Track[]
-    versions: Version[]
-    administrator: boolean
-  }
+  app: App
+  tracks: Track[]
+  versions: Version[]
+  administrator: boolean
 }
 
 export interface CreateAppResponse {
-  data: {
-    id: string
-    name: string
-  }
+  id: string
+  name: string
 }
 
 export interface UploadVersionResponse {
-  data: {
-    version: string
-    app: App
-  }
+  version: string
+  app: App
 }

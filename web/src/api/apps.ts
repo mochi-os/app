@@ -14,7 +14,7 @@ const listApps = async (): Promise<App[]> => {
   const response = await requestHelpers.get<AppsListResponse>(
     endpoints.apps.list
   )
-  return response.data.apps
+  return response.apps
 }
 
 const getApp = async (
@@ -28,7 +28,7 @@ const getApp = async (
   const response = await requestHelpers.get<AppDetailsResponse>(
     endpoints.apps.get(id)
   )
-  return response.data
+  return response
 }
 
 const createApp = async (
@@ -39,7 +39,7 @@ const createApp = async (
     endpoints.apps.create,
     { name, privacy }
   )
-  return response.data
+  return response
 }
 
 const uploadVersion = async (
@@ -60,7 +60,7 @@ const uploadVersion = async (
       },
     }
   )
-  return response.data
+  return response
 }
 
 export const appsApi = {
