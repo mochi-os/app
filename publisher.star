@@ -15,7 +15,10 @@ def action_list(a):
 
 # View an app
 def action_view(a):
-	app = mochi.db.row("select * from apps where id=?", a.input("id"))
+	id = a.input("id")
+	if len(id) > 51:
+		return {"status": 400, "error": "Invalid app ID", "data": {}}
+	app = mochi.db.row("select * from apps where id=?", id)
 	if not app:
 		return {"status": 404, "error": "App not found", "data": {}}
 
@@ -42,7 +45,10 @@ def action_create(a):
 
 # Create a version
 def action_version_create(a):
-	app = mochi.db.row("select * from apps where id=?", a.input("app"))
+	id = a.input("app")
+	if len(id) > 51:
+		return {"status": 400, "error": "Invalid app ID", "data": {}}
+	app = mochi.db.row("select * from apps where id=?", id)
 	if not app:
 		return {"status": 404, "error": "App not found", "data": {}}
 
