@@ -55,16 +55,10 @@ export function Apps() {
   return (
     <>
       <Main>
-        <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h2 className="text-2xl font-bold tracking-tight">Your Apps</h2>
-            <p className="text-muted-foreground">
-              Manage and publish your applications
-            </p>
-          </div>
+        <div className="mb-6 flex justify-end">
           <Button onClick={() => setShowCreateDialog(true)}>
             <Plus className="mr-2 h-4 w-4" />
-            New App
+            New app
           </Button>
         </div>
 
@@ -88,17 +82,9 @@ export function Apps() {
                 className="flex cursor-pointer flex-col transition-shadow hover:shadow-md"
                 onClick={() => setSelectedAppId(app.id)}
               >
-                <CardHeader className="pb-3">
+                <CardHeader>
                   <CardTitle className="truncate text-lg">{app.name}</CardTitle>
-                  <CardDescription className="truncate font-mono text-xs">
-                    {app.id}
-                  </CardDescription>
                 </CardHeader>
-                <CardContent className="flex-1">
-                  <p className="text-sm text-muted-foreground capitalize">
-                    {app.privacy}
-                  </p>
-                </CardContent>
               </Card>
             ))}
           </div>

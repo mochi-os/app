@@ -22,5 +22,5 @@ export const Route = createFileRoute('/_authenticated')({
 
     return
   },
-  component: () => <AuthenticatedLayout title="Publisher" />,
+  component: () => <AuthenticatedLayout title="App Publisher" />,
 })

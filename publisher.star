@@ -4,9 +4,9 @@
 # Create database
 def database_create():
 	mochi.db.query("create table apps ( id text not null primary key, name text not null, privacy text not null default 'public' )")
-	mochi.db.query("create table versions ( app references app( id ), version text not null, file text not null, primary key ( app, version ) )")
+	mochi.db.query("create table versions ( app references apps( id ), version text not null, file text not null, primary key ( app, version ) )")
 	mochi.db.query("create index versions_file on versions( file )")
-	mochi.db.query("create table tracks ( app references app( id ), track text not null, version text not null, primary key ( app, track ) )")
+	mochi.db.query("create table tracks ( app references apps( id ), track text not null, version text not null, primary key ( app, track ) )")
 
 # List apps
 def action_list(a):
