@@ -1,3 +1,4 @@
+import { requestHelpers } from '@mochi/common'
 import endpoints from '@/api/endpoints'
 import type {
   AppsListResponse,
@@ -8,7 +9,6 @@ import type {
   Track,
   Version,
 } from '@/api/types/apps'
-import { requestHelpers } from '@mochi/common'
 
 const listApps = async (): Promise<App[]> => {
   const response = await requestHelpers.get<AppsListResponse>(
@@ -63,7 +63,7 @@ const uploadVersion = async (
   return response
 }
 
-export const appsApi = {
+const appsApi = {
   list: listApps,
   get: getApp,
   create: createApp,
