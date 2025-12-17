@@ -3,14 +3,14 @@
 
 # Create database
 def database_create():
-	mochi.db.query("create table apps ( id text not null primary key, name text not null, privacy text not null default 'public' )")
-	mochi.db.query("create table versions ( app references apps( id ), version text not null, file text not null, primary key ( app, version ) )")
-	mochi.db.query("create index versions_file on versions( file )")
-	mochi.db.query("create table tracks ( app references apps( id ), track text not null, version text not null, primary key ( app, track ) )")
+	mochi.db.execute("create table apps ( id text not null primary key, name text not null, privacy text not null default 'public' )")
+	mochi.db.execute("create table versions ( app references apps( id ), version text not null, file text not null, primary key ( app, version ) )")
+	mochi.db.execute("create index versions_file on versions( file )")
+	mochi.db.execute("create table tracks ( app references apps( id ), track text not null, version text not null, primary key ( app, track ) )")
 
 # List apps
 def action_list(a):
-	apps = mochi.db.query("select * from apps order by name")
+	apps = mochi.db.rows("select * from apps order by name")
 	return {"data": {"apps": apps}}
 
 # View an app
@@ -23,8 +23,8 @@ def action_view(a):
 		return {"status": 404, "error": "App not found", "data": {}}
 
 	app["fingerprint"] = mochi.entity.fingerprint(app["id"], True)
-	tracks = mochi.db.query("select * from tracks where app=? order by track", app["id"])
-	versions = mochi.db.query("select * from versions where app=? order by version", app["id"])
+	tracks = mochi.db.rows("select * from tracks where app=? order by track", app["id"])
+	versions = mochi.db.rows("select * from versions where app=? order by version", app["id"])
 
 	return {"data": {"app": app, "tracks": tracks, "versions": versions, "administrator": a.user.role == "administrator"}}
 
@@ -39,7 +39,7 @@ def action_create(a):
 		return {"status": 400, "error": "Invalid privacy", "data": {}}
 
 	id = mochi.entity.create("app", name, privacy)
-	mochi.db.query("replace into apps ( id, name, privacy ) values ( ?, ?, ? )", id, name, privacy)
+	mochi.db.execute("replace into apps ( id, name, privacy ) values ( ?, ?, ? )", id, name, privacy)
 
 	return {"data": {"id": id, "name": name}}
 
@@ -60,8 +60,8 @@ def action_version_create(a):
 
 	version = mochi.app.install(app["id"], file, a.input("install") != "yes")
 
-	mochi.db.query("replace into versions ( app, version, file ) values ( ?, ?, ? )", app["id"], version, file)
-	mochi.db.query("replace into tracks ( app, track, version ) values ( ?, 'production', ? )", app["id"], version)
+	mochi.db.execute("replace into versions ( app, version, file ) values ( ?, ?, ? )", app["id"], version, file)
+	mochi.db.execute("replace into tracks ( app, track, version ) values ( ?, 'production', ? )", app["id"], version)
 
 	return {"data": {"version": version, "app": app}}
 
@@ -73,7 +73,7 @@ def event_information(e):
 
 	e.write({"status": "200"})
 	e.write(a)
-	e.write(mochi.db.query("select track, version from tracks where app=?", a["id"]))
+	e.write(mochi.db.rows("select track, version from tracks where app=?", a["id"]))
 
 # Receive a request to download an app
 def event_get(e):
