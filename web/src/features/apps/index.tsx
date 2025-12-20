@@ -1,4 +1,5 @@
 import { useState, useRef } from 'react'
+import { usePageTitle } from '@/hooks/usePageTitle'
 import {
   Dialog,
   DialogContent,
@@ -26,6 +27,7 @@ import {
 } from '@/hooks/useApps'
 
 export function Apps() {
+  usePageTitle('Publisher')
   const [selectedAppId, setSelectedAppId] = useState<string | null>(null)
   const [showCreateDialog, setShowCreateDialog] = useState(false)
 
