@@ -8,6 +8,10 @@ def database_create():
 	mochi.db.execute("create index versions_file on versions( file )")
 	mochi.db.execute("create table tracks ( app references apps( id ), track text not null, version text not null, primary key ( app, track ) )")
 
+# Return JSON error response
+def json_error(message, code=400):
+	return {"status": code, "error": message, "data": {}}
+
 # List apps
 def action_list(a):
 	apps = mochi.db.rows("select * from apps order by name")
@@ -17,10 +21,10 @@ def action_list(a):
 def action_view(a):
 	id = a.input("id")
 	if len(id) > 51:
-		return {"status": 400, "error": "Invalid app ID", "data": {}}
+		return json_error("Invalid app ID")
 	app = mochi.db.row("select * from apps where id=?", id)
 	if not app:
-		return {"status": 404, "error": "App not found", "data": {}}
+		return json_error("App not found", 404)
 
 	app["fingerprint"] = mochi.entity.fingerprint(app["id"], True)
 	tracks = mochi.db.rows("select * from tracks where app=? order by track", app["id"])
@@ -32,11 +36,11 @@ def action_view(a):
 def action_create(a):
 	name = a.input("name")
 	if not mochi.valid(name, "name"):
-		return {"status": 400, "error": "Invalid app name", "data": {}}
+		return json_error("Invalid app name")
 
 	privacy = a.input("privacy")
 	if not mochi.valid(privacy, "privacy"):
-		return {"status": 400, "error": "Invalid privacy", "data": {}}
+		return json_error("Invalid privacy")
 
 	id = mochi.entity.create("app", name, privacy)
 	mochi.db.execute("replace into apps ( id, name, privacy ) values ( ?, ?, ? )", id, name, privacy)
@@ -47,14 +51,14 @@ def action_create(a):
 def action_version_create(a):
 	id = a.input("app")
 	if len(id) > 51:
-		return {"status": 400, "error": "Invalid app ID", "data": {}}
+		return json_error("Invalid app ID")
 	app = mochi.db.row("select * from apps where id=?", id)
 	if not app:
-		return {"status": 404, "error": "App not found", "data": {}}
+		return json_error("App not found", 404)
 
 	file = a.input("file")
 	if not mochi.valid(file, "filename"):
-		return {"status": 400, "error": "File name invalid", "data": {}}
+		return json_error("File name invalid")
 
 	a.upload("file", file)
 
