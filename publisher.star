@@ -60,7 +60,9 @@ def action_version_create(a):
 
 	version = mochi.app.install(app["id"], file, a.input("install") != "yes")
 
-	mochi.db.execute("replace into versions ( app, version, file ) values ( ?, ?, ? )", app["id"], version, file)
+	# Use insert or ignore to prevent duplicate version entries from concurrent requests
+	mochi.db.execute("insert or ignore into versions ( app, version, file ) values ( ?, ?, ? )", app["id"], version, file)
+	# Track update: last concurrent request wins (acceptable for admin operations)
 	mochi.db.execute("replace into tracks ( app, track, version ) values ( ?, 'production', ? )", app["id"], version)
 
 	return {"data": {"version": version, "app": app}}
@@ -81,7 +83,11 @@ def event_get(e):
 	if not a:
 		return e.write({"status": "404", "message": "App not found or not public"})
 
-	v = mochi.db.row("select * from versions where app=? and version=?", a["id"], e.content("version"))
+	version = e.content("version")
+	if not version or len(version) > 50:
+		return e.write({"status": "400", "message": "Invalid version"})
+
+	v = mochi.db.row("select * from versions where app=? and version=?", a["id"], version)
 	if not v:
 		return e.write({"status": "404", "message": "App version not found"})
 
@@ -94,7 +100,11 @@ def event_version(e):
 	if not a:
 		return e.write({"status": "404", "message": "App not found or not public"})
 
-	t = mochi.db.row("select version from tracks where app=? and track=?", a["id"], e.content("track", "production"))
+	track = e.content("track", "production")
+	if len(track) > 50:
+		return e.write({"status": "400", "message": "Invalid track"})
+
+	t = mochi.db.row("select version from tracks where app=? and track=?", a["id"], track)
 	if not t:
 		return e.write({"status": "404", "message": "App track not found"})
 
