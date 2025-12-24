@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react'
-import { usePageTitle } from '@/hooks/usePageTitle'
+import { usePageTitle } from '@mochi/common'
 import {
   Dialog,
   DialogContent,
