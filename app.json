@@ -5,14 +5,14 @@
 	"version": "1.0",
 	"label": "app_name",
 	"paths": ["publisher"],
-	"services": ["app"],
+	"services": ["publisher"],
 
 	"architecture": {"engine": "starlark", "version": 2},
 	"execute": ["publisher.star"],
 
 	"database": {
 		"schema": 1,
-		"file": "app.db",
+		"file": "publisher.db",
 		"create": {"function": "database_create"}
 	},
 
@@ -31,8 +31,8 @@
 	},
 
 	"events": {
-		"information": {"function": "event_information"},
-		"get": {"function": "event_get"},
-		"version": {"function": "event_version"}
+		"information": {"function": "event_information", "anonymous": true},
+		"get": {"function": "event_get", "anonymous": true},
+		"version": {"function": "event_version", "anonymous": true}
 	}
 }

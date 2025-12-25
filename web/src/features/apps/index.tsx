@@ -329,7 +329,7 @@ function UploadVersionDialog({
   showInstallOption: boolean
 }) {
   const [file, setFile] = useState<File | null>(null)
-  const [install, setInstall] = useState(false)
+  const [install, setInstall] = useState(true)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const uploadMutation = useUploadVersionMutation()
 
@@ -348,7 +348,7 @@ function UploadVersionDialog({
             description: `Version ${data.version} has been created.`,
           })
           setFile(null)
-          setInstall(false)
+          setInstall(true)
           if (fileInputRef.current) {
             fileInputRef.current.value = ''
           }
