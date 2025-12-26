@@ -83,6 +83,9 @@ export function Apps() {
               >
                 <CardHeader>
                   <CardTitle className='truncate text-lg'>{app.name}</CardTitle>
+                  {app.version && (
+                    <p className='text-muted-foreground text-sm'>{app.version}</p>
+                  )}
                 </CardHeader>
               </Card>
             ))}

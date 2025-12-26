@@ -14,7 +14,7 @@ def json_error(message, code=400):
 
 # List apps
 def action_list(a):
-	apps = mochi.db.rows("select * from apps order by name")
+	apps = mochi.db.rows("select a.*, t.version from apps a left join tracks t on a.id = t.app and t.track = 'production' order by a.name")
 	return {"data": {"apps": apps}}
 
 # View an app
