@@ -199,7 +199,7 @@ function AppDetails({ appId, onBack }: { appId: string; onBack: () => void }) {
 
           <Card>
             <CardHeader>
-              <CardTitle>Upload New Version</CardTitle>
+              <CardTitle>Upload new version</CardTitle>
               <CardDescription>
                 Upload a new version of your app as a zip file
               </CardDescription>
@@ -365,7 +365,7 @@ function UploadVersionDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Upload New Version</DialogTitle>
+          <DialogTitle>Upload new version</DialogTitle>
           <DialogDescription>
             Upload a zip file containing your app
           </DialogDescription>
@@ -395,8 +395,8 @@ function UploadVersionDialog({
                   onChange={(e) => setInstall(e.target.value === 'yes')}
                   className='border-input bg-background flex h-10 w-full rounded-md border px-3 py-2 text-sm'
                 >
-                  <option value='no'>No</option>
                   <option value='yes'>Yes</option>
+                  <option value='no'>No</option>
                 </select>
               </div>
             )}

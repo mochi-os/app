@@ -62,7 +62,7 @@ def action_version_create(a):
 
 	a.upload("file", file)
 
-	version = mochi.app.install(app["id"], file, a.input("install") != "yes")
+	version = mochi.app.file.install(app["id"], file, a.input("install") != "yes")
 
 	# Use insert or ignore to prevent duplicate version entries from concurrent requests
 	mochi.db.execute("insert or ignore into versions ( app, version, file ) values ( ?, ?, ? )", app["id"], version, file)
