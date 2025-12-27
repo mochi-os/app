@@ -2,7 +2,7 @@
 // Copyright Alistair Cunningham 2025
 
 {
-	"version": "1.6",
+	"version": "1.7",
 	"label": "app_name",
 	"paths": ["publisher"],
 	"services": ["publisher"],
@@ -25,7 +25,7 @@
 		"assets": {"files": "web/dist/assets"},
 		"images": {"files": "web/dist/images"},
 		"list": {"function": "action_list"},
-		"view/:id": {"function": "action_view"},
+		":id": {"function": "action_view", "anonymous": true},
 		"create": {"function": "action_create"},
 		":app/version/create": {"function": "action_version_create"}
 	},

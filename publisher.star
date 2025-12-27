@@ -17,7 +17,7 @@ def action_list(a):
 	apps = mochi.db.rows("select a.*, t.version from apps a left join tracks t on a.id = t.app and t.track = 'production' order by a.name")
 	return {"data": {"apps": apps}}
 
-# View an app
+# View an app (supports both authenticated and anonymous access)
 def action_view(a):
 	id = a.input("id")
 	if not id or len(id) > 51:
@@ -28,9 +28,17 @@ def action_view(a):
 
 	app["fingerprint"] = mochi.entity.fingerprint(app["id"], True)
 	tracks = mochi.db.rows("select * from tracks where app=? order by track", app["id"])
-	versions = mochi.db.rows("select * from versions where app=? order by version", app["id"])
 
-	return {"data": {"app": app, "tracks": tracks, "versions": versions, "administrator": a.user.role == "administrator"}}
+	# Check if user is authenticated and is an administrator
+	is_admin = a.user and a.user.role == "administrator"
+
+	# For anonymous users or non-admins, return public share info only
+	if not is_admin:
+		return {"data": {"app": app, "tracks": tracks, "versions": [], "administrator": False, "share": True}}
+
+	# For administrators, return full management info
+	versions = mochi.db.rows("select * from versions where app=? order by version", app["id"])
+	return {"data": {"app": app, "tracks": tracks, "versions": versions, "administrator": True, "share": False}}
 
 # Create new app
 def action_create(a):

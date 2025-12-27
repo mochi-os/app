@@ -3,7 +3,7 @@ export interface App {
   name: string
   privacy: string
   version?: string
-  fingerprint?: string
+  fingerprint: string
 }
 
 export interface Track {
@@ -27,6 +27,7 @@ export interface AppDetailsResponse {
   tracks: Track[]
   versions: Version[]
   administrator: boolean
+  share: boolean
 }
 
 export interface CreateAppResponse {

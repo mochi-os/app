@@ -18,19 +18,20 @@ import {
   Main,
   usePageTitle,
 } from '@mochi/common'
-import { ArrowLeft, Upload } from 'lucide-react'
+import { ArrowLeft, Upload, Copy, Check } from 'lucide-react'
 import { toast } from 'sonner'
 import { useAppQuery, useUploadVersionMutation } from '@/hooks/useApps'
 
-export const Route = createFileRoute('/_authenticated/$appId')({
-  component: AppDetailsPage,
+export const Route = createFileRoute('/$appId')({
+  component: AppPage,
 })
 
-function AppDetailsPage() {
+function AppPage() {
   const { appId } = Route.useParams()
   const navigate = useNavigate()
   const { data, isLoading } = useAppQuery(appId)
   const [showUploadDialog, setShowUploadDialog] = useState(false)
+  const [copied, setCopied] = useState(false)
 
   const handleBack = () => {
     navigate({ to: '/' })
@@ -42,9 +43,6 @@ function AppDetailsPage() {
     return (
       <>
         <Header fixed>
-          <Button variant='ghost' size='sm' onClick={handleBack} className='mr-2'>
-            <ArrowLeft className='h-4 w-4' />
-          </Button>
           <h1 className='text-lg font-semibold'>Loading...</h1>
         </Header>
         <Main>
@@ -56,8 +54,14 @@ function AppDetailsPage() {
     )
   }
 
-  const { app, tracks, versions, administrator } = data
+  const { app, tracks, versions, administrator, share } = data
 
+  // Show share page for unauthenticated users or non-admins
+  if (share) {
+    return <SharePage app={app} tracks={tracks} copied={copied} setCopied={setCopied} />
+  }
+
+  // Show management page for administrators
   return (
     <>
       <Header fixed>
@@ -85,6 +89,36 @@ function AppDetailsPage() {
               <div>
                 <span className='font-medium'>Privacy:</span>{' '}
                 <span className='capitalize'>{app.privacy}</span>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Share</CardTitle>
+              <CardDescription>
+                Share this URL to allow others to install this app
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className='flex items-center gap-2'>
+                <Input
+                  readOnly
+                  value={window.location.href}
+                  className='font-mono text-sm'
+                />
+                <Button
+                  variant='outline'
+                  size='icon'
+                  onClick={() => {
+                    navigator.clipboard.writeText(window.location.href)
+                    setCopied(true)
+                    setTimeout(() => setCopied(false), 2000)
+                    toast.success('URL copied to clipboard')
+                  }}
+                >
+                  {copied ? <Check className='h-4 w-4' /> : <Copy className='h-4 w-4' />}
+                </Button>
               </div>
             </CardContent>
           </Card>
@@ -151,6 +185,98 @@ function AppDetailsPage() {
           appId={appId}
           showInstallOption={administrator}
         />
+      </Main>
+    </>
+  )
+}
+
+function SharePage({
+  app,
+  tracks,
+  copied,
+  setCopied,
+}: {
+  app: { id: string; name: string; privacy: string; fingerprint: string }
+  tracks: { track: string; version: string }[]
+  copied: boolean
+  setCopied: (v: boolean) => void
+}) {
+  const serverUrl = window.location.host
+
+  return (
+    <>
+      <Header fixed>
+        <h1 className='text-lg font-semibold'>{app.name}</h1>
+      </Header>
+
+      <Main>
+        <div className='space-y-6'>
+          <Card>
+            <CardHeader>
+              <CardTitle>Install this app</CardTitle>
+              <CardDescription>
+                Use these details to install this app on your Mochi server
+              </CardDescription>
+            </CardHeader>
+            <CardContent className='space-y-4'>
+              <div className='space-y-2'>
+                <label className='text-sm font-medium'>Server</label>
+                <Input readOnly value={serverUrl} className='font-mono text-sm' />
+              </div>
+              <div className='space-y-2'>
+                <label className='text-sm font-medium'>Entity ID</label>
+                <Input readOnly value={app.id} className='font-mono text-sm' />
+              </div>
+              <Button
+                variant='outline'
+                className='w-full'
+                onClick={() => {
+                  navigator.clipboard.writeText(`${serverUrl}\n${app.id}`)
+                  setCopied(true)
+                  setTimeout(() => setCopied(false), 2000)
+                  toast.success('Copied to clipboard')
+                }}
+              >
+                {copied ? <Check className='mr-2 h-4 w-4' /> : <Copy className='mr-2 h-4 w-4' />}
+                Copy install details
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>App details</CardTitle>
+            </CardHeader>
+            <CardContent className='space-y-3'>
+              <div>
+                <span className='font-medium'>Fingerprint:</span>{' '}
+                <span className='font-mono text-sm'>{app.fingerprint}</span>
+              </div>
+              <div>
+                <span className='font-medium'>Privacy:</span>{' '}
+                <span className='capitalize'>{app.privacy}</span>
+              </div>
+            </CardContent>
+          </Card>
+
+          {tracks.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Available version</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className='space-y-2'>
+                  {tracks.map((track) => (
+                    <div key={track.track} className='flex justify-between'>
+                      <span className='font-medium'>{track.track}</span>
+                      <span className='font-mono text-sm'>{track.version}</span>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+        </div>
       </Main>
     </>
   )
