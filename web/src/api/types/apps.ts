@@ -28,6 +28,7 @@ export interface AppDetailsResponse {
   versions: Version[]
   administrator: boolean
   share: boolean
+  publisher: string
 }
 
 export interface CreateAppResponse {

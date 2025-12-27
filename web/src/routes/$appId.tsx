@@ -71,11 +71,14 @@ function AppPage() {
     )
   }
 
-  const { app, tracks, versions, administrator, share } = data
+  const { app, tracks, versions, administrator, share, publisher } = data
+
+  // Build share string: just app ID for public, app@publisher for private
+  const shareString = app.privacy === 'public' ? app.id : `${app.id}@${publisher}`
 
   // Show share page for unauthenticated users or non-admins
   if (share) {
-    return <SharePage app={app} tracks={tracks} copied={copied} setCopied={setCopied} />
+    return <SharePage app={app} tracks={tracks} shareString={shareString} copied={copied} setCopied={setCopied} />
   }
 
   // Show management page for administrators
@@ -114,24 +117,24 @@ function AppPage() {
             <CardHeader>
               <CardTitle>Share</CardTitle>
               <CardDescription>
-                Share this URL to allow others to install this app
+                Share this ID to allow others to install this app
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className='flex items-center gap-2'>
                 <Input
                   readOnly
-                  value={window.location.href}
+                  value={shareString}
                   className='font-mono text-sm'
                 />
                 <Button
                   variant='outline'
                   size='icon'
                   onClick={() => {
-                    navigator.clipboard.writeText(window.location.href)
+                    navigator.clipboard.writeText(shareString)
                     setCopied(true)
                     setTimeout(() => setCopied(false), 2000)
-                    toast.success('URL copied to clipboard')
+                    toast.success('App ID copied to clipboard')
                   }}
                 >
                   {copied ? <Check className='h-4 w-4' /> : <Copy className='h-4 w-4' />}
@@ -210,16 +213,16 @@ function AppPage() {
 function SharePage({
   app,
   tracks,
+  shareString,
   copied,
   setCopied,
 }: {
   app: { id: string; name: string; privacy: string; fingerprint: string }
   tracks: { track: string; version: string }[]
+  shareString: string
   copied: boolean
   setCopied: (v: boolean) => void
 }) {
-  const serverUrl = window.location.host
-
   return (
     <>
       <Header fixed>
@@ -232,30 +235,26 @@ function SharePage({
             <CardHeader>
               <CardTitle>Install this app</CardTitle>
               <CardDescription>
-                Use these details to install this app on your Mochi server
+                Copy this ID and paste it in your Mochi server's Apps page to install
               </CardDescription>
             </CardHeader>
             <CardContent className='space-y-4'>
               <div className='space-y-2'>
-                <label className='text-sm font-medium'>Server</label>
-                <Input readOnly value={serverUrl} className='font-mono text-sm' />
-              </div>
-              <div className='space-y-2'>
-                <label className='text-sm font-medium'>Entity ID</label>
-                <Input readOnly value={app.id} className='font-mono text-sm' />
+                <label className='text-sm font-medium'>App ID</label>
+                <Input readOnly value={shareString} className='font-mono text-sm' />
               </div>
               <Button
                 variant='outline'
                 className='w-full'
                 onClick={() => {
-                  navigator.clipboard.writeText(`${serverUrl}\n${app.id}`)
+                  navigator.clipboard.writeText(shareString)
                   setCopied(true)
                   setTimeout(() => setCopied(false), 2000)
                   toast.success('Copied to clipboard')
                 }}
               >
                 {copied ? <Check className='mr-2 h-4 w-4' /> : <Copy className='mr-2 h-4 w-4' />}
-                Copy install details
+                Copy app ID
               </Button>
             </CardContent>
           </Card>

@@ -25,6 +25,7 @@ const getApp = async (
   versions: Version[]
   administrator: boolean
   share: boolean
+  publisher: string
 }> => {
   const response = await requestHelpers.get<AppDetailsResponse>(
     endpoints.apps.get(id)

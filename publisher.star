@@ -19,7 +19,7 @@ def action_list(a):
 
 # View an app (supports both authenticated and anonymous access)
 def action_view(a):
-	id = a.input("id")
+	id = a.input("app")
 	if not id or len(id) > 51:
 		return json_error("Invalid app ID")
 	app = mochi.db.row("select * from apps where id=?", id)
@@ -29,16 +29,19 @@ def action_view(a):
 	app["fingerprint"] = mochi.entity.fingerprint(app["id"], True)
 	tracks = mochi.db.rows("select * from tracks where app=? order by track", app["id"])
 
+	# Get publisher identity for share string
+	publisher = a.user.identity.id if a.user and a.user.identity else ""
+
 	# Check if user is authenticated and is an administrator
 	is_admin = a.user and a.user.role == "administrator"
 
 	# For anonymous users or non-admins, return public share info only
 	if not is_admin:
-		return {"data": {"app": app, "tracks": tracks, "versions": [], "administrator": False, "share": True}}
+		return {"data": {"app": app, "tracks": tracks, "versions": [], "administrator": False, "share": True, "publisher": publisher}}
 
 	# For administrators, return full management info
 	versions = mochi.db.rows("select * from versions where app=? order by version", app["id"])
-	return {"data": {"app": app, "tracks": tracks, "versions": versions, "administrator": True, "share": False}}
+	return {"data": {"app": app, "tracks": tracks, "versions": versions, "administrator": True, "share": False, "publisher": publisher}}
 
 # Create new app
 def action_create(a):
