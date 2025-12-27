@@ -17,9 +17,7 @@ const listApps = async (): Promise<App[]> => {
   return response.apps
 }
 
-const getApp = async (
-  id: string
-): Promise<{
+const getApp = async (id: string): Promise<{
   app: App
   tracks: Track[]
   versions: Version[]

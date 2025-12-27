@@ -80,9 +80,9 @@ export function Apps() {
       <CreateAppDialog
         open={showCreateDialog}
         onOpenChange={setShowCreateDialog}
-        onSuccess={(id) => {
+        onSuccess={(fingerprint) => {
           setShowCreateDialog(false)
-          navigate({ to: '/$appId', params: { appId: id } })
+          navigate({ to: '/$appId', params: { appId: fingerprint } })
         }}
       />
     </Main>

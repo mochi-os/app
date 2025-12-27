@@ -217,7 +217,7 @@ function SharePage({
   copied,
   setCopied,
 }: {
-  app: { id: string; name: string; privacy: string; fingerprint: string }
+  app: { id: string; name: string; privacy: string; fingerprint?: string }
   tracks: { track: string; version: string }[]
   shareString: string
   copied: boolean

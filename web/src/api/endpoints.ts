@@ -7,7 +7,7 @@ const endpoints = {
   },
   apps: {
     list: 'list',
-    get: (id: string) => id,
+    get: (id: string) => `view?app=${id}`,
     create: 'create',
     uploadVersion: (id: string) => `${id}/version/create`,
   },

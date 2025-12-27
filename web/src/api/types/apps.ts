@@ -3,7 +3,7 @@ export interface App {
   name: string
   privacy: string
   version?: string
-  fingerprint: string
+  fingerprint?: string
 }
 
 export interface Track {
