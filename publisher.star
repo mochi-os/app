@@ -20,7 +20,7 @@ def action_list(a):
 # View an app
 def action_view(a):
 	id = a.input("id")
-	if len(id) > 51:
+	if not id or len(id) > 51:
 		return json_error("Invalid app ID")
 	app = mochi.db.row("select * from apps where id=?", id)
 	if not app:
@@ -43,6 +43,9 @@ def action_create(a):
 		return json_error("Invalid privacy")
 
 	id = mochi.entity.create("app", name, privacy)
+	if not id:
+		return json_error("Failed to create app entity", 500)
+
 	mochi.db.execute("replace into apps ( id, name, privacy ) values ( ?, ?, ? )", id, name, privacy)
 
 	return {"data": {"id": id, "name": name}}
@@ -50,7 +53,7 @@ def action_create(a):
 # Create a version
 def action_version_create(a):
 	id = a.input("app")
-	if len(id) > 51:
+	if not id or len(id) > 51:
 		return json_error("Invalid app ID")
 	app = mochi.db.row("select * from apps where id=?", id)
 	if not app:
@@ -82,6 +85,9 @@ def action_version_create(a):
 					return json_error("Paths mismatch: expected " + str(old_paths) + ", got " + str(new_paths) + ". Use force=yes to override.")
 
 	version = mochi.app.file.install(app["id"], file, a.input("install") != "yes")
+	if not version:
+		mochi.file.delete(file)
+		return json_error("Failed to install app version", 500)
 
 	# Use insert or ignore to prevent duplicate version entries from concurrent requests
 	mochi.db.execute("insert or ignore into versions ( app, version, file ) values ( ?, ?, ? )", app["id"], version, file)
@@ -113,6 +119,9 @@ def event_get(e):
 	v = mochi.db.row("select * from versions where app=? and version=?", a["id"], version)
 	if not v:
 		return e.write({"status": "404", "message": "App version not found"})
+
+	if not mochi.file.exists(v["file"]):
+		return e.write({"status": "404", "message": "App version file not found"})
 
 	e.write({"status": "200"})
 	e.write_from_file(v["file"])
