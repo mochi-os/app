@@ -38,11 +38,13 @@ export const useUploadVersionMutation = () => {
       appId,
       file,
       install,
+      force,
     }: {
       appId: string
       file: File
       install: boolean
-    }) => appsApi.uploadVersion(appId, file, install),
+      force: boolean
+    }) => appsApi.uploadVersion(appId, file, install, force),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: appKeys.all() })
     },

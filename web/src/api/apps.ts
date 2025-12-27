@@ -45,11 +45,15 @@ const createApp = async (
 const uploadVersion = async (
   appId: string,
   file: File,
-  install: boolean
+  install: boolean,
+  force: boolean
 ): Promise<{ version: string; app: App }> => {
   const formData = new FormData()
   formData.append('file', file)
   formData.append('install', install ? 'yes' : 'no')
+  if (force) {
+    formData.append('force', 'yes')
+  }
 
   const response = await requestHelpers.post<UploadVersionResponse>(
     endpoints.apps.uploadVersion(appId),
