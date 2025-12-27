@@ -72,7 +72,7 @@ def action_version_create(a):
 
 		# Get the latest existing version
 		existing = mochi.db.row("select file from versions where app=? order by version desc limit 1", app["id"])
-		if existing and existing["file"]:
+		if existing and existing["file"] and mochi.file.exists(existing["file"]):
 			old_info = mochi.app.file.get(existing["file"])
 			if old_info and old_info.get("paths"):
 				new_paths = new_info.get("paths") or []
