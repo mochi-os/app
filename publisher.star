@@ -108,20 +108,22 @@ def action_version_create(a):
 	return {"data": {"version": version, "app": app}}
 
 # Receive a request for information about an app
+# Private apps are accessible if the requester knows the publisher ID
 def event_information(e):
-	a = mochi.db.row("select * from apps where id=? and privacy='public'", e.header("to"))
+	a = mochi.db.row("select * from apps where id=?", e.header("to"))
 	if not a:
-		return e.write({"status": "404", "message": "App not found or not public"})
+		return e.write({"status": "404", "message": "App not found"})
 
 	e.write({"status": "200"})
 	e.write(a)
 	e.write(mochi.db.rows("select track, version from tracks where app=?", a["id"]))
 
 # Receive a request to download an app
+# Private apps are accessible if the requester knows the publisher ID
 def event_get(e):
-	a = mochi.db.row("select * from apps where id=? and privacy='public'", e.header("to"))
+	a = mochi.db.row("select * from apps where id=?", e.header("to"))
 	if not a:
-		return e.write({"status": "404", "message": "App not found or not public"})
+		return e.write({"status": "404", "message": "App not found"})
 
 	version = e.content("version")
 	if not version or len(version) > 50:
@@ -138,10 +140,11 @@ def event_get(e):
 	e.write_from_file(v["file"])
 
 # Receive a request to get version for requested track
+# Private apps are accessible if the requester knows the publisher ID
 def event_version(e):
-	a = mochi.db.row("select * from apps where id=? and privacy='public'", e.header("to"))
+	a = mochi.db.row("select * from apps where id=?", e.header("to"))
 	if not a:
-		return e.write({"status": "404", "message": "App not found or not public"})
+		return e.write({"status": "404", "message": "App not found"})
 
 	track = e.content("track", "production")
 	if len(track) > 50:
