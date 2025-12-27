@@ -29,7 +29,7 @@ export const Route = createFileRoute('/$appId')({
 function AppPage() {
   const { appId } = Route.useParams()
   const navigate = useNavigate()
-  const { data, isLoading } = useAppQuery(appId)
+  const { data, isLoading, isError } = useAppQuery(appId)
   const [showUploadDialog, setShowUploadDialog] = useState(false)
   const [copied, setCopied] = useState(false)
 
@@ -39,7 +39,7 @@ function AppPage() {
 
   usePageTitle(data?.app?.name ?? 'App')
 
-  if (isLoading || !data) {
+  if (isLoading) {
     return (
       <>
         <Header fixed>
@@ -48,6 +48,23 @@ function AppPage() {
         <Main>
           <div className='flex h-64 items-center justify-center'>
             <div className='text-muted-foreground'>Loading app details...</div>
+          </div>
+        </Main>
+      </>
+    )
+  }
+
+  if (isError || !data || !data.app) {
+    return (
+      <>
+        <Header fixed>
+          <h1 className='text-lg font-semibold'>App not found</h1>
+        </Header>
+        <Main>
+          <div className='flex h-64 items-center justify-center'>
+            <div className='text-muted-foreground'>
+              The requested app could not be found.
+            </div>
           </div>
         </Main>
       </>
