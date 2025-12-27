@@ -168,8 +168,7 @@ function UploadVersionDialog({
   showInstallOption: boolean
 }) {
   const [file, setFile] = useState<File | null>(null)
-  const [install, setInstall] = useState(true)
-  const [force, setForce] = useState(false)
+  const [installOption, setInstallOption] = useState<'yes' | 'yes-force' | 'no'>('yes')
   const fileInputRef = useRef<HTMLInputElement>(null)
   const uploadMutation = useUploadVersionMutation()
 
@@ -180,6 +179,9 @@ function UploadVersionDialog({
       return
     }
 
+    const install = installOption !== 'no'
+    const force = installOption === 'yes-force'
+
     uploadMutation.mutate(
       { appId, file, install, force },
       {
@@ -188,8 +190,7 @@ function UploadVersionDialog({
             description: `Version ${data.version} has been created.`,
           })
           setFile(null)
-          setInstall(true)
-          setForce(false)
+          setInstallOption('yes')
           if (fileInputRef.current) {
             fileInputRef.current.value = ''
           }
@@ -228,31 +229,20 @@ function UploadVersionDialog({
             {showInstallOption && (
               <div className='space-y-2'>
                 <label htmlFor='install' className='text-sm font-medium'>
-                  Also install locally
+                  Install locally
                 </label>
                 <select
                   id='install'
-                  value={install ? 'yes' : 'no'}
-                  onChange={(e) => setInstall(e.target.value === 'yes')}
+                  value={installOption}
+                  onChange={(e) => setInstallOption(e.target.value as 'yes' | 'yes-force' | 'no')}
                   className='border-input bg-background flex h-10 w-full rounded-md border px-3 py-2 text-sm'
                 >
                   <option value='yes'>Yes</option>
+                  <option value='yes-force'>Yes, force</option>
                   <option value='no'>No</option>
                 </select>
               </div>
             )}
-            <div className='flex items-center gap-2'>
-              <input
-                type='checkbox'
-                id='force'
-                checked={force}
-                onChange={(e) => setForce(e.target.checked)}
-                className='h-4 w-4'
-              />
-              <label htmlFor='force' className='text-sm'>
-                Force upload (skip path validation)
-              </label>
-            </div>
           </div>
           <DialogFooter>
             <Button
